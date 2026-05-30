@@ -1,13 +1,26 @@
-<section id="contact" class="card-section bg-blue-500">
-  <div class="card-content mx-auto flex max-w-6xl flex-col gap-6 px-6 md:px-10">
-    <div class="space-y-4">
+<section id="contact" class="card-section border-t border-[var(--color-border)] bg-blue-500">
+  <div
+    class="card-content mx-auto grid max-w-6xl gap-8 px-6 md:grid-cols-[0.9fr_1.1fr] md:items-center md:px-10"
+  >
+    <div class="space-y-5">
       <h2 class="section-title">Contact</h2>
-      <p class="max-w-2xl text-base leading-relaxed sm:text-lg">
+      <p class="max-w-xl text-base leading-relaxed sm:text-lg">
         Let&apos;s build something bold together. Share your idea and I&apos;ll
         respond within 24 hours.
       </p>
+      <a
+        href="mailto:hello@example.com"
+        class="inline-flex text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-highlight)]"
+        data-cursor="hover"
+      >
+        hello@example.com
+      </a>
     </div>
-    <form class="grid max-w-xl gap-4" data-contact-form novalidate>
+    <form
+      class="grid gap-4 border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6"
+      data-contact-form
+      novalidate
+    >
       <div class="contact-field grid gap-2">
         <label
           for="name"
@@ -18,6 +31,7 @@
           id="name"
           name="name"
           type="text"
+          autocomplete="name"
           required
           class="rounded-xl border border-[var(--color-border)] bg-transparent px-4 py-3 text-sm text-[var(--color-primary)] outline-none transition focus:border-[var(--color-primary)]"
         />
@@ -32,6 +46,7 @@
           id="email"
           name="email"
           type="email"
+          autocomplete="email"
           required
           class="rounded-xl border border-[var(--color-border)] bg-transparent px-4 py-3 text-sm text-[var(--color-primary)] outline-none transition focus:border-[var(--color-primary)]"
         />
@@ -52,7 +67,7 @@
       </div>
       <button
         type="submit"
-        class="mt-2 rounded-full border border-[var(--color-accent)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-accent)] transition hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)]"
+        class="mt-2 border border-[var(--color-accent)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-accent)] transition hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)] disabled:pointer-events-none disabled:opacity-60"
         data-submit
         data-cursor="hover"
       >
@@ -64,12 +79,16 @@
 </section>
 
 <script>
-  const form = document.querySelector("[data-contact-form]");
-  const status = document.querySelector("[data-contact-status]");
-  const submitButton = document.querySelector("[data-submit]");
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  const status = document.querySelector<HTMLElement>("[data-contact-status]");
+  const submitButton =
+    document.querySelector<HTMLButtonElement>("[data-submit]");
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const setStatus = (state, message) => {
+  const setStatus = (
+    state: "loading" | "error" | "success",
+    message: string,
+  ) => {
     if (!status) return;
     status.dataset.state = state;
     status.textContent = message;
@@ -93,40 +112,41 @@
       }
 
       if (submitButton) {
-        submitButton.setAttribute("disabled", "true");
-        submitButton.classList.add("opacity-60", "cursor-not-allowed");
+        submitButton.disabled = true;
       }
 
       setStatus("loading", "Sending your message...");
 
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        body: formData,
-      });
+      try {
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          body: formData,
+        });
 
-      const isJson = response.headers
-        .get("content-type")
-        ?.includes("application/json");
-      const payload = isJson ? await response.json() : null;
+        const isJson = response.headers
+          .get("content-type")
+          ?.includes("application/json");
+        const payload = isJson ? await response.json() : null;
 
-      if (!response.ok) {
+        if (!response.ok) {
+          setStatus(
+            "error",
+            payload?.error || "Something went wrong. Please try again.",
+          );
+          return;
+        }
+
+        setStatus("success", "Thanks! Your message has been sent.");
+        form.reset();
+      } catch {
         setStatus(
           "error",
-          payload?.error || "Something went wrong. Please try again.",
+          "Network error. Please try again or email me directly.",
         );
+      } finally {
         if (submitButton) {
-          submitButton.removeAttribute("disabled");
-          submitButton.classList.remove("opacity-60", "cursor-not-allowed");
+          submitButton.disabled = false;
         }
-        return;
-      }
-
-      setStatus("success", "Thanks! Your message has been sent.");
-      form.reset();
-
-      if (submitButton) {
-        submitButton.removeAttribute("disabled");
-        submitButton.classList.remove("opacity-60", "cursor-not-allowed");
       }
     });
   }

@@ -50,12 +50,19 @@ if (typeof window !== 'undefined') {
     requestAnimationFrame(setActiveNav);
 
     const getAnchorTarget = (href: string) => {
-      if (href === '#hero') return 0;
-
       const target = document.querySelector<HTMLElement>(href);
       if (!target) return null;
 
-      return Math.max(0, target.offsetTop);
+      if (href === '#hero') return 0;
+
+      const sectionIndex = sections.findIndex((section) => section.id === target.id);
+      if (sectionIndex < 0) return Math.max(0, target.offsetTop);
+
+      const hero = sections[0];
+      const heroHeight = hero?.offsetHeight ?? 0;
+      const stackedSectionHeight = window.innerHeight;
+
+      return Math.max(0, heroHeight + stackedSectionHeight * (sectionIndex - 1));
     };
 
     document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((anchor) => {
@@ -67,10 +74,14 @@ if (typeof window !== 'undefined') {
         if (targetScroll !== null) {
           event.preventDefault();
 
+          lenis.stop();
+          window.scrollTo({ top: window.scrollY });
+          lenis.start();
+
           lenis.scrollTo(targetScroll, {
             duration: 1.1,
-            lock: true,
             force: true,
+            immediate: false,
             onComplete: () => {
               history.replaceState(null, '', href);
               setActiveNav();
