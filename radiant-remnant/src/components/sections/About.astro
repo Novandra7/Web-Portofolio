@@ -1,0 +1,27 @@
+---
+const skills = ['Astro', 'React', 'Next.js', 'Node.js', 'GSAP', 'Tailwind CSS', 'PostgreSQL', 'Supabase'];
+---
+
+<section id="about" class="card-section bg-lime-500">
+  <div class="card-content mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-[1.2fr_0.8fr] md:px-10">
+    <div class="space-y-6">
+      <h2 class="section-title">About</h2>
+      <p class="about-line text-base leading-relaxed sm:text-lg">
+        I&apos;m a multidisciplinary developer focused on web experiences that feel confident, bold, and alive. My
+        approach balances strong visual direction with performance-first engineering.
+      </p>
+      <p class="about-line text-base leading-relaxed sm:text-lg">
+        From product discovery to launch, I collaborate closely with designers, founders, and teams to build
+        websites that convert and products that scale.
+      </p>
+    </div>
+    <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+      <p class="text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]">Core Stack</p>
+      <ul class="mt-6 grid gap-3 text-sm uppercase tracking-[0.2em] text-[var(--color-primary)]">
+        {skills.map((skill) => (
+          <li class="rounded-full border border-[var(--color-border)] px-4 py-2">{skill}</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>

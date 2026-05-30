@@ -1,0 +1,16 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[var(--color-border)]">
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 text-sm md:flex-row md:items-center md:justify-between md:px-10">
+    <p class="text-[var(--color-muted)]">© {year} Novandra. Built with Astro, GSAP, and Lenis.</p>
+    <div class="flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]">
+      <a href="https://github.com/yourname" target="_blank" rel="noreferrer" data-cursor="hover">GitHub</a>
+      <a href="https://www.linkedin.com/in/yourname" target="_blank" rel="noreferrer" data-cursor="hover">
+        LinkedIn
+      </a>
+      <a href="mailto:hello@example.com" data-cursor="hover">Email</a>
+    </div>
+  </div>
+</footer>

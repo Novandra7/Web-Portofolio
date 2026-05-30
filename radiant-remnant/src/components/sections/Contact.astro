@@ -1,0 +1,133 @@
+<section id="contact" class="card-section bg-blue-500">
+  <div class="card-content mx-auto flex max-w-6xl flex-col gap-6 px-6 md:px-10">
+    <div class="space-y-4">
+      <h2 class="section-title">Contact</h2>
+      <p class="max-w-2xl text-base leading-relaxed sm:text-lg">
+        Let&apos;s build something bold together. Share your idea and I&apos;ll
+        respond within 24 hours.
+      </p>
+    </div>
+    <form class="grid max-w-xl gap-4" data-contact-form novalidate>
+      <div class="contact-field grid gap-2">
+        <label
+          for="name"
+          class="text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]"
+          >Name</label
+        >
+        <input
+          id="name"
+          name="name"
+          type="text"
+          required
+          class="rounded-xl border border-[var(--color-border)] bg-transparent px-4 py-3 text-sm text-[var(--color-primary)] outline-none transition focus:border-[var(--color-primary)]"
+        />
+      </div>
+      <div class="contact-field grid gap-2">
+        <label
+          for="email"
+          class="text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]"
+          >Email</label
+        >
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          class="rounded-xl border border-[var(--color-border)] bg-transparent px-4 py-3 text-sm text-[var(--color-primary)] outline-none transition focus:border-[var(--color-primary)]"
+        />
+      </div>
+      <div class="contact-field grid gap-2">
+        <label
+          for="message"
+          class="text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]"
+          >Message</label
+        >
+        <textarea
+          id="message"
+          name="message"
+          rows="5"
+          required
+          class="rounded-xl border border-[var(--color-border)] bg-transparent px-4 py-3 text-sm text-[var(--color-primary)] outline-none transition focus:border-[var(--color-primary)]"
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        class="mt-2 rounded-full border border-[var(--color-accent)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-accent)] transition hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)]"
+        data-submit
+        data-cursor="hover"
+      >
+        Send Message
+      </button>
+      <p class="text-sm" data-contact-status aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector("[data-contact-form]");
+  const status = document.querySelector("[data-contact-status]");
+  const submitButton = document.querySelector("[data-submit]");
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const setStatus = (state, message) => {
+    if (!status) return;
+    status.dataset.state = state;
+    status.textContent = message;
+  };
+
+  if (form) {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const name = String(formData.get("name") || "").trim();
+      const email = String(formData.get("email") || "").trim();
+      const message = String(formData.get("message") || "").trim();
+
+      if (!name || !emailPattern.test(email) || message.length < 10) {
+        setStatus(
+          "error",
+          "Please provide a valid name, email, and a message of at least 10 characters.",
+        );
+        return;
+      }
+
+      if (submitButton) {
+        submitButton.setAttribute("disabled", "true");
+        submitButton.classList.add("opacity-60", "cursor-not-allowed");
+      }
+
+      setStatus("loading", "Sending your message...");
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        body: formData,
+      });
+
+      const isJson = response.headers
+        .get("content-type")
+        ?.includes("application/json");
+      const payload = isJson ? await response.json() : null;
+
+      if (!response.ok) {
+        setStatus(
+          "error",
+          payload?.error || "Something went wrong. Please try again.",
+        );
+        if (submitButton) {
+          submitButton.removeAttribute("disabled");
+          submitButton.classList.remove("opacity-60", "cursor-not-allowed");
+        }
+        return;
+      }
+
+      setStatus("success", "Thanks! Your message has been sent.");
+      form.reset();
+
+      if (submitButton) {
+        submitButton.removeAttribute("disabled");
+        submitButton.classList.remove("opacity-60", "cursor-not-allowed");
+      }
+    });
+  }
+</script>

@@ -1,0 +1,76 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projectsWithSlug } from "../../data/projects";
+
+export function getStaticPaths() {
+  return projectsWithSlug.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<BaseLayout
+  title={`${project.title} — Project`}
+  description={project.description}
+>
+  <section class="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-20 md:px-10">
+    <a
+      href="/"
+      class="text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]"
+      data-cursor="hover"
+    >
+      ← Back to Home
+    </a>
+    <div class="space-y-4">
+      <p class="text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]">
+        {project.year}
+      </p>
+      <h1 class="text-3xl font-bold uppercase tracking-[0.08em] sm:text-5xl">
+        {project.title}
+      </h1>
+      <p class="text-base leading-relaxed sm:text-lg">{project.description}</p>
+    </div>
+    <div
+      class="flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-[var(--color-muted)]"
+    >
+      {
+        project.techStack.map((tech) => (
+          <span class="rounded-full border border-[var(--color-border)] px-3 py-1">
+            {tech}
+          </span>
+        ))
+      }
+    </div>
+    <div
+      class="flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-[var(--color-muted)]"
+    >
+      {
+        project.demoUrl ? (
+          <a
+            href={project.demoUrl}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="hover"
+          >
+            Live Demo
+          </a>
+        ) : null
+      }
+      {
+        project.repoUrl ? (
+          <a
+            href={project.repoUrl}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor="hover"
+          >
+            Repository
+          </a>
+        ) : null
+      }
+    </div>
+  </section>
+</BaseLayout>

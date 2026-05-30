@@ -1,0 +1,62 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/layout/Navbar.astro';
+import Footer from '../components/layout/Footer.astro';
+import CustomCursor from '../components/ui/CustomCursor.astro';
+
+const {
+  title = 'Novandra — Frontend & Full-stack Developer',
+  description = 'A bold, brutalist portfolio focused on high-impact, fast, and accessible digital experiences.',
+} = Astro.props;
+
+const siteUrl = Astro.site?.href ?? 'https://example.com';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Novandra',
+  jobTitle: 'Frontend & Full-stack Developer',
+  url: siteUrl,
+  sameAs: ['https://github.com/yourname', 'https://www.linkedin.com/in/yourname'],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <CustomCursor />
+    <div class="min-h-screen">
+      <Navbar />
+      <main class="card-stack">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <script>
+      import '../scripts/lenis-init.ts';
+    </script>
+    <script>
+      import '../scripts/gsap-init.ts';
+    </script>
+    <script>
+      import '../scripts/cursor.ts';
+    </script>
+  </body>
+</html>

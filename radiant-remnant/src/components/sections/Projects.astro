@@ -1,0 +1,21 @@
+---
+import { projects } from '../../data/projects';
+import ProjectCard from '../ui/ProjectCard.astro';
+---
+
+<section id="projects" class="card-section border-y border-[var(--color-border)] bg-red-500">
+  <div class="card-content mx-auto flex max-w-6xl flex-col gap-6 px-6 md:px-10">
+    <div class="space-y-4">
+      <h2 class="section-title">Selected Projects</h2>
+      <p class="max-w-2xl text-base leading-relaxed sm:text-lg">
+        A snapshot of recent work spanning product launches, brand experiences, and high-converting marketing
+        sites.
+      </p>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {projects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+  </div>
+</section>
